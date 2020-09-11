@@ -10,7 +10,9 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class WarehouseServiceConfiguration {
     @Bean
-    public WarehouseClient warehouseClient(@Value("${warehouse.rest.url}") String url) {
-        return new WarehouseRestClientFactory().create(new RestTemplate(), url);
+    public WarehouseRestClient warehouseClient(@Value("${warehouse.rest.url}") String url) {
+        WarehouseClient warehouseClient = new WarehouseRestClientFactory().create(new RestTemplate(), url);
+
+        return new WarehouseRestClient(warehouseClient);
     }
 }
