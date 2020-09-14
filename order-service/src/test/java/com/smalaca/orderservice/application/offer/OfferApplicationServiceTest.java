@@ -5,10 +5,14 @@ import com.smalaca.orderservice.infrastructure.warehouse.rest.WarehouseRestClien
 import com.smalaca.orderservice.infrastructure.warehouse.rest.WarehouseServiceContract;
 import com.smalaca.orderservice.infrastructure.warehouse.rest.WarehouseServiceScenario;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.smalaca.orderservice.application.offer.OfferItemDtoExpectation.Builder.item;
 import static com.smalaca.orderservice.application.offer.OfferItemsDtoAssertion.assertThat;
@@ -32,11 +36,12 @@ class OfferApplicationServiceTest {
         assertThat(actual).hasNoItems();
     }
 
-    @Test
-    void shouldReturnFoundItemsWithoutDiscount() {
+    @ParameterizedTest
+    @MethodSource("discounts")
+    void shouldReturnFoundItems(Month month, double expectedPrice1, double expectedPrice2) {
         WarehouseServiceScenario scenario = contract.existingItems();
         given(warehouseRestClient.findItems(scenario.searchCriteria())).willReturn(scenario.expectedItems());
-        given(clock.now()).willReturn(LocalDate.of(2020, Month.JANUARY, 1));
+        given(clock.now()).willReturn(LocalDate.of(2020, month, 1));
 
         List<OfferItemDto> actual = offerApplicationService.find(scenario.searchCriteria());
 
@@ -45,10 +50,27 @@ class OfferApplicationServiceTest {
                 .has(item()
                         .withId(2)
                         .withName("Clean Code: A Handbook of Agile Software Craftsmanship")
-                        .withPrice(110, "PLN"))
+                        .withPrice(expectedPrice1, "PLN"))
                 .has(item()
                         .withId(6)
                         .withName("The Clean Coder: A Code of Conduct for Professional Programmers")
-                        .withPrice(70, "PLN"));
+                        .withPrice(expectedPrice2, "PLN"));
+    }
+
+    private static Stream<Arguments> discounts() {
+        return Stream.of(
+                Arguments.of(Month.JANUARY, 110, 70),
+                Arguments.of(Month.FEBRUARY, 110, 70),
+                Arguments.of(Month.MARCH, 93.5, 59.5),
+                Arguments.of(Month.APRIL, 93.5, 59.5),
+                Arguments.of(Month.MAY, 110, 70),
+                Arguments.of(Month.JUNE, 110, 70),
+                Arguments.of(Month.JULY, 110, 70),
+                Arguments.of(Month.AUGUST, 110, 70),
+                Arguments.of(Month.SEPTEMBER, 77, 49),
+                Arguments.of(Month.OCTOBER, 77, 49),
+                Arguments.of(Month.NOVEMBER, 110, 70),
+                Arguments.of(Month.DECEMBER, 99, 63)
+        );
     }
 }
