@@ -9,26 +9,18 @@ import static java.util.stream.Collectors.toList;
 
 public class OfferApplicationService {
     private final WarehouseRestClient warehouseRestClient;
-    private final DiscountStrategy discountStrategy;
+    private final OfferItemDtoFactory offerItemDtoFactory;
 
-    OfferApplicationService(WarehouseRestClient warehouseRestClient, DiscountStrategy discountStrategy) {
+    OfferApplicationService(WarehouseRestClient warehouseRestClient, OfferItemDtoFactory offerItemDtoFactory) {
         this.warehouseRestClient = warehouseRestClient;
-        this.discountStrategy = discountStrategy;
+        this.offerItemDtoFactory = offerItemDtoFactory;
     }
 
     public List<OfferItemDto> find(String search) {
         List<ItemDto> items = warehouseRestClient.findItems(search);
 
         return items.stream()
-                .map(item -> new OfferItemDto(item.getId(), item.getName(), withDiscount(item)))
+                .map(offerItemDtoFactory::create)
                 .collect(toList());
-    }
-
-    private OfferItemPriceDto withDiscount(ItemDto itemDto) {
-        return new OfferItemPriceDto(amount(itemDto), itemDto.getCurrency());
-    }
-
-    private double amount(ItemDto itemDto) {
-        return discountStrategy.withDiscount(itemDto.getAmount());
     }
 }

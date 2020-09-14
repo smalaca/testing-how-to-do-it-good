@@ -9,6 +9,9 @@ import org.springframework.context.annotation.Configuration;
 public class OfferApplicationServiceFactory {
     @Bean
     public OfferApplicationService create(WarehouseRestClient warehouseRestClient, Clock clock) {
-        return new OfferApplicationService(warehouseRestClient, new DiscountStrategy(clock));
+        DiscountStrategy discountStrategy = new DiscountStrategy(clock);
+        OfferItemDtoFactory offerItemDtoFactory = new OfferItemDtoFactory(discountStrategy);
+
+        return new OfferApplicationService(warehouseRestClient, offerItemDtoFactory);
     }
 }
