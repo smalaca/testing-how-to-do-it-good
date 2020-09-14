@@ -6,33 +6,29 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static com.smalaca.orderservice.infrastructure.warehouse.rest.ItemDtoExpectation.Builder.item;
-import static com.smalaca.orderservice.infrastructure.warehouse.rest.ItemsDtoAssertion.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class WarehouseRestClientTest {
+    private final WarehouseServiceContract contract = new WarehouseServiceContract();
+
     @Autowired private WarehouseRestClient warehouseRestClient;
 
     @Test
     void shouldReturnFoundItems() {
-        List<ItemDto> actual = warehouseRestClient.findItems("Clean Code");
+        WarehouseServiceScenario scenario = contract.existingItems();
 
-        assertThat(actual)
-                .hasItems(2)
-                .has(item()
-                        .withId(2)
-                        .withName("Clean Code: A Handbook of Agile Software Craftsmanship")
-                        .withPrice(110, "PLN"))
-                .has(item()
-                        .withId(6)
-                        .withName("The Clean Coder: A Code of Conduct for Professional Programmers")
-                        .withPrice(70, "PLN"));
+        List<ItemDto> actual = warehouseRestClient.findItems(scenario.searchCriteria());
+
+        assertThat(actual).containsExactlyInAnyOrderElementsOf(scenario.expectedItems());
     }
 
     @Test
     void shouldReturnNoItemsWhenNothingFound() {
-        List<ItemDto> actual = warehouseRestClient.findItems("Not so clean code");
+        WarehouseServiceScenario scenario = contract.notExistingItems();
 
-        assertThat(actual).hasNoItems();
+        List<ItemDto> actual = warehouseRestClient.findItems(scenario.searchCriteria());
+
+        assertThat(actual).containsExactlyInAnyOrderElementsOf(scenario.expectedItems());
     }
 }

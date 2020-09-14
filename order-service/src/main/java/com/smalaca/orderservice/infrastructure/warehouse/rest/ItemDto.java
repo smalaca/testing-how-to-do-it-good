@@ -1,5 +1,8 @@
 package com.smalaca.orderservice.infrastructure.warehouse.rest;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class ItemDto {
     private final int id;
     private final String name;
@@ -27,5 +30,31 @@ public class ItemDto {
 
     public String getCurrency() {
         return currency;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ItemDto itemDto = (ItemDto) o;
+
+        return new EqualsBuilder()
+                .append(id, itemDto.id)
+                .append(amount, itemDto.amount)
+                .append(name, itemDto.name)
+                .append(currency, itemDto.currency)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(name)
+                .append(amount)
+                .append(currency)
+                .toHashCode();
     }
 }
