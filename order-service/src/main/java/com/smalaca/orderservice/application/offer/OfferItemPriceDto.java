@@ -1,15 +1,15 @@
 package com.smalaca.orderservice.application.offer;
 
 public class OfferItemPriceDto {
-    private final int amount;
+    private final double amount;
     private final String currency;
 
-    public OfferItemPriceDto(int amount, String currency) {
+    public OfferItemPriceDto(double amount, String currency) {
         this.amount = amount;
         this.currency = currency;
     }
 
-    public int getAmount() {
+    public double getAmount() {
         return amount;
     }
 

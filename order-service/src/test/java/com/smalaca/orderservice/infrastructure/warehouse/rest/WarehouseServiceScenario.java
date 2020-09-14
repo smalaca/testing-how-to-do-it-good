@@ -15,7 +15,7 @@ public class WarehouseServiceScenario {
         return searchCriteria;
     }
 
-    List<ItemDto> expectedItems() {
+    public List<ItemDto> expectedItems() {
         return items;
     }
 }
