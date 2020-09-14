@@ -16,7 +16,8 @@ class WarehouseRestClientTest {
     void shouldReturnFoundItems() {
         List<ItemDto> actual = warehouseRestClient.findItems("Clean Code");
 
-        assertThat(actual).hasSize(2)
+        assertThat(actual)
+                .hasSize(2)
                 .anySatisfy(item -> {
                     ItemDtoAssertion.assertThat(item)
                             .hasId(2)
@@ -24,10 +25,10 @@ class WarehouseRestClientTest {
                             .hasPrice(110, "PLN");
                 })
                 .anySatisfy(item -> {
-                    assertThat(item.getId()).isEqualTo(6);
-                    assertThat(item.getName()).isEqualTo("The Clean Coder: A Code of Conduct for Professional Programmers");
-                    assertThat(item.getAmount()).isEqualTo(70);
-                    assertThat(item.getCurrency()).isEqualTo("PLN");
+                    ItemDtoAssertion.assertThat(item)
+                            .hasId(6)
+                            .hasName("The Clean Coder: A Code of Conduct for Professional Programmers")
+                            .hasPrice(70, "PLN");
                 });
     }
 
