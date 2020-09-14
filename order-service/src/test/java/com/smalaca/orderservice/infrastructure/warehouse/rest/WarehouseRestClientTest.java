@@ -18,10 +18,10 @@ class WarehouseRestClientTest {
 
         assertThat(actual).hasSize(2)
                 .anySatisfy(item -> {
-                    assertThat(item.getId()).isEqualTo(2);
-                    assertThat(item.getName()).isEqualTo("Clean Code: A Handbook of Agile Software Craftsmanship");
-                    assertThat(item.getAmount()).isEqualTo(110);
-                    assertThat(item.getCurrency()).isEqualTo("PLN");
+                    ItemDtoAssertion.assertThat(item)
+                            .hasId(2)
+                            .hasName("Clean Code: A Handbook of Agile Software Craftsmanship")
+                            .hasPrice(110, "PLN");
                 })
                 .anySatisfy(item -> {
                     assertThat(item.getId()).isEqualTo(6);
