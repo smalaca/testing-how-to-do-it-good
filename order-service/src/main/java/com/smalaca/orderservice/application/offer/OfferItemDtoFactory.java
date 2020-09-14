@@ -1,12 +1,17 @@
 package com.smalaca.orderservice.application.offer;
 
+import com.smalaca.orderservice.clock.Clock;
 import com.smalaca.orderservice.infrastructure.warehouse.rest.ItemDto;
 
 class OfferItemDtoFactory {
     private final DiscountStrategy discountStrategy;
 
-    OfferItemDtoFactory(DiscountStrategy discountStrategy) {
+    private OfferItemDtoFactory(DiscountStrategy discountStrategy) {
         this.discountStrategy = discountStrategy;
+    }
+
+    static OfferItemDtoFactory create(Clock clock) {
+        return new OfferItemDtoFactory(new DiscountStrategy(clock));
     }
 
     OfferItemDto create(ItemDto item) {
