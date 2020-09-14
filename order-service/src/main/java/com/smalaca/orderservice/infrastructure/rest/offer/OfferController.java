@@ -1,7 +1,7 @@
-package com.smalaca.orderservice.infrastructure.rest.order;
+package com.smalaca.orderservice.infrastructure.rest.offer;
 
-import com.smalaca.orderservice.application.order.OfferItemDto;
-import com.smalaca.orderservice.application.order.OfferItemPriceDto;
+import com.smalaca.orderservice.application.offer.OfferItemDto;
+import com.smalaca.orderservice.application.offer.OfferItemPriceDto;
 import com.smalaca.orderservice.infrastructure.warehouse.rest.ItemDto;
 import com.smalaca.orderservice.infrastructure.warehouse.rest.WarehouseRestClient;
 import org.springframework.web.bind.annotation.GetMapping;

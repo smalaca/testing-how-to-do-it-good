@@ -1,4 +1,4 @@
-package com.smalaca.orderservice.application.order;
+package com.smalaca.orderservice.application.offer;
 
 public class OfferItemDto {
     private final int id;
