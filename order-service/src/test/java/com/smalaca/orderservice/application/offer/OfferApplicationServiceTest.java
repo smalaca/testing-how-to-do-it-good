@@ -9,27 +9,26 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static com.smalaca.orderservice.application.offer.OfferItemDtoExpectation.Builder.item;
 import static com.smalaca.orderservice.application.offer.OfferItemsDtoAssertion.assertThat;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 class OfferApplicationServiceTest {
     private final WarehouseServiceContract contract = new WarehouseServiceContract();
     private final WarehouseRestClient warehouseRestClient = mock(WarehouseRestClient.class);
     private final Clock clock = mock(Clock.class);
+    private final Given given = new Given(warehouseRestClient, clock);
 
     private final OfferApplicationService offerApplicationService = new OfferApplicationServiceFactory().create(warehouseRestClient, clock);
 
     @Test
     void shouldReturnNothingWhenNoItemsFound() {
         WarehouseServiceScenario scenario = contract.notExistingItems();
-        given(warehouseRestClient.findItems(scenario.searchCriteria())).willReturn(scenario.expectedItems());
+        given.foundItemsFor(scenario);
 
         List<OfferItemDto> actual = offerApplicationService.find(scenario.searchCriteria());
 
@@ -40,8 +39,9 @@ class OfferApplicationServiceTest {
     @MethodSource("discounts")
     void shouldReturnFoundItems(Month month, double expectedPrice1, double expectedPrice2) {
         WarehouseServiceScenario scenario = contract.existingItems();
-        given(warehouseRestClient.findItems(scenario.searchCriteria())).willReturn(scenario.expectedItems());
-        given(clock.now()).willReturn(LocalDate.of(2020, month, 1));
+        given
+                .foundItemsFor(scenario)
+                .currentMonth(month);
 
         List<OfferItemDto> actual = offerApplicationService.find(scenario.searchCriteria());
 
