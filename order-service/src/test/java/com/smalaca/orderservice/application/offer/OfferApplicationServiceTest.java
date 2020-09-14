@@ -1,10 +1,13 @@
 package com.smalaca.orderservice.application.offer;
 
+import com.smalaca.orderservice.clock.Clock;
 import com.smalaca.orderservice.infrastructure.warehouse.rest.WarehouseRestClient;
 import com.smalaca.orderservice.infrastructure.warehouse.rest.WarehouseServiceContract;
 import com.smalaca.orderservice.infrastructure.warehouse.rest.WarehouseServiceScenario;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 
 import static com.smalaca.orderservice.application.offer.OfferItemDtoExpectation.Builder.item;
@@ -15,8 +18,9 @@ import static org.mockito.Mockito.mock;
 class OfferApplicationServiceTest {
     private final WarehouseServiceContract contract = new WarehouseServiceContract();
     private final WarehouseRestClient warehouseRestClient = mock(WarehouseRestClient.class);
+    private final Clock clock = mock(Clock.class);
 
-    private final OfferApplicationService offerApplicationService = new OfferApplicationServiceFactory().create(warehouseRestClient);
+    private final OfferApplicationService offerApplicationService = new OfferApplicationServiceFactory().create(warehouseRestClient, clock);
 
     @Test
     void shouldReturnNothingWhenNoItemsFound() {
@@ -29,9 +33,10 @@ class OfferApplicationServiceTest {
     }
 
     @Test
-    void shouldReturnFoundItems() {
+    void shouldReturnFoundItemsWithoutDiscount() {
         WarehouseServiceScenario scenario = contract.existingItems();
         given(warehouseRestClient.findItems(scenario.searchCriteria())).willReturn(scenario.expectedItems());
+        given(clock.now()).willReturn(LocalDate.of(2020, Month.JANUARY, 1));
 
         List<OfferItemDto> actual = offerApplicationService.find(scenario.searchCriteria());
 

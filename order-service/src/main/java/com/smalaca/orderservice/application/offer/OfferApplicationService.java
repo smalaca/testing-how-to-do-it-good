@@ -1,5 +1,6 @@
 package com.smalaca.orderservice.application.offer;
 
+import com.smalaca.orderservice.clock.Clock;
 import com.smalaca.orderservice.infrastructure.warehouse.rest.ItemDto;
 import com.smalaca.orderservice.infrastructure.warehouse.rest.WarehouseRestClient;
 
@@ -10,9 +11,11 @@ import static java.util.stream.Collectors.toList;
 
 public class OfferApplicationService {
     private final WarehouseRestClient warehouseRestClient;
+    private final Clock clock;
 
-    OfferApplicationService(WarehouseRestClient warehouseRestClient) {
+    OfferApplicationService(WarehouseRestClient warehouseRestClient, Clock clock) {
         this.warehouseRestClient = warehouseRestClient;
+        this.clock = clock;
     }
 
     public List<OfferItemDto> find(String search) {
@@ -28,7 +31,7 @@ public class OfferApplicationService {
     }
 
     private double withDiscount(int amount) {
-        LocalDate now = LocalDate.now();
+        LocalDate now = clock.now();
 
         switch (now.getMonth()) {
             case MARCH:
